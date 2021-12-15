@@ -7,19 +7,23 @@
 ⚫ 指導老師姓名：劉志俊
 ⚫ 會議記錄： 20201016畢業專題第四次會議紀錄.pdf
               20210101畢業專題第十四次會議紀錄.pdf
-⚫ 畢業專題計畫書：專題規格書.pdf
+⚫ 畢業專題計畫書：
 ⚫ 成果報告書：
 ⚫ 程式：
-⚫ 簡報：智慧通報系統.pptx
+⚫ 簡報：
 ⚫ 海報：
 ⚫ 介紹影片：https://www.youtube.com/watch?v=wpKDx_Rw3mg
 
-安裝與執行方式說明文件:
-一、下載所需檔案
-      1.在Github 下載 requirements.txt
-        (要記此檔的路徑)
+安裝與執行方式說明:
+一、在Github下載所需檔案
+      1.下載壓縮檔 project_listen.zip
+      
+      2.下載壓縮檔 project_listen_send.zip
+      
+      3.下載文字檔 requirements.txt
+        * 要記此檔的路徑，例如: C:\Users\user\Downloads *
 
-二、建立伺服端虛擬環境
+二、建立虛擬環境
       1.到Google上搜尋並安裝Anaconda
       
       2.按下 Windows鍵 找到 Anaconda3(64-bit)資料夾內 Anaconda Powershell Prompt(Anaconda3)
@@ -30,28 +34,78 @@
         
       5.進入虛擬環境 conda activate listen2
       
-      6.找到 cd (下載到的路徑)
+      6.設定路徑 cd C:\Users\user\Downloads
+        * 你放置檔案的路徑 *
       
-      8.安裝伺服端所需套件 pip install -r requirements.txt
+      7.安裝伺服端所需套件 pip install -r requirements.txt
+      
+      8.安裝pipwin套件 pip install pipwin
+
+      9.安裝PyAudio套件 pipwin install pyaudio
 
 三、伺服端系統安裝
-      1.下載壓縮檔 project_listen.7z 
       
-      2.解壓縮 project_listen.7z 為資料夾 project_listen 
+      1.解壓縮 project_listen.zip 為資料夾 project_listen 
       
-      3.至 Google雲端硬碟 下載資料夾 h5 
+      2.至 Google雲端硬碟 下載資料夾 h5 
         連結：https://drive.google.com/drive/folders/1TtMiUozXBEINVaMxbp2vPLv8vJpx93LA?usp=sharing
-        (如果 h5 資料夾為壓縮檔，請解壓縮為資料夾)
+        * 如果 h5 資料夾為壓縮檔，請解壓縮為資料夾 *
       
-      4.將資料夾h5 放至資料夾 project_listen 內
+      3.將資料夾h5 放至資料夾 project_listen 內
+      
+      4.打開資料夾 project_listen 裡的資料夾 package
+            
+      5.打開程式檔 Cloud_package.py
+        
+      6.找到第166行，輸入你的LINE Token金鑰
+        * LINE Token金鑰需自行申請，申請方式下方會有參考連結*
 
-四、客戶端系統安裝
-      1.下載壓縮檔 project_listen_send.7z 
+四、執行伺服端
+      1.按下 Windows鍵 找到 Anaconda3(64-bit)資料夾內 Anaconda Powershell Prompt(Anaconda3)
       
-      2.解壓縮 project_listen_send.7z 為資料夾 project_listen_send.7z 
+      2.點下開啟 Anaconda Powershell Prompt(Anaconda3)
+        
+      3.進入虛擬環境 conda activate listen2
+      
+      4.設定路徑 cd (你放置檔案的路徑)
+        * 例如cd C:\listen_project\project_listen *
+      
+      5.執行程式 'python manage.py runserver 127.0.0.1:8000'
+        * 127.0.0.1只是本地IP，需換成可用的IP *
+        
+五、客戶端系統安裝
+      1.解壓縮 project_listen_send.zip 為資料夾 project_listen_send
+      
+      2.打開資料夾 project_listen_send
+      
+      3.打開程式檔 send.py
+      
+      4.找到第69行，輸入你伺服器架設的URL
+        * URL參考例子 'http://25.60.164.203:8000/Test/' *
+      
+      5.分貝值(DB)設定
+        * 在第61行，基本設定為70，視麥克風品質與環境因素可做調整 *      
+        
+六、執行客戶端
+      1.按下 Windows鍵 找到 Anaconda3(64-bit)資料夾內 Anaconda Powershell Prompt(Anaconda3)
+      
+      2.點下開啟 Anaconda Powershell Prompt(Anaconda3)
+        
+      3.進入虛擬環境 conda activate listen2
+      
+      4.設定路徑 cd (你放置檔案的路徑)
+        *例如cd C:\listen_project\project_listen_send*
+      
+      5.執行程式 python send.py
+      
+      6.開始收音
 
-五、伺服端環境架設
-      1.下載伺服端所需套件 requirements.txt
+七、結果
+      1.在手機的LINE上會有辨識結果
       
-      2.安裝伺服端所需套件套件pip install -r requirements.txt
+      2.在Google瀏覽器上輸入 http://127.0.0.1:8000/login/ 會出現該網站
+
+LINE Notify機器人的Token金鑰申請參考連結:
+https://www.quantpass.org/linenotify-with-python/
+
       
