@@ -1,15 +1,57 @@
-⚫ 專題名稱： 情緒聲音辨識
+⚫ 專題名稱： 智慧通報系統
 ⚫ 組員：
-      資工3A 410715936 黃駿瑜
-      資工3A 410719346 許智淵
-      資工3A 410703507 林哲宇
-      資工3A 410715318 郭駿頤
+      資工四A 410715936 黃駿瑜
+      資工四A 410719346 許智淵
+      資工四A 410703507 林哲宇
+      資工四A 410715318 郭駿頤
 ⚫ 指導老師姓名：劉志俊
-⚫ 會議記錄： 20201016畢業專題第四次會議紀錄.pdf
-              20210101畢業專題第十四次會議紀錄.pdf
+⚫ 會議記錄：20201016畢業專題第四次會議紀錄.pdf
+             20210101畢業專題第十四次會議紀錄.pdf
 ⚫ 畢業專題計畫書：專題規格書.pdf
-⚫ 成果報告書：
-⚫ 程式：
-⚫ 簡報：
-⚫ 海報：
-⚫ 介紹影片：
+⚫ 成果報告書：成果報告書.pdf
+⚫ 程式：project_listen.zip 
+         project_listen_send.zip 
+         requirements.txt
+⚫ 簡報：智慧通報系統.pptx
+⚫ 海報：智慧通報系統海報.jpg
+⚫ 介紹影片：https://www.youtube.com/watch?v=kwxmPtnjt-M
+安裝與執行方式說明文件:
+一、下載所需檔案
+      1.在Github 下載 requirements.txt
+        (要記此檔的路徑)
+
+二、建立伺服端虛擬環境
+      1.到Google上搜尋並安裝Anaconda
+      
+      2.按下 Windows鍵 找到 Anaconda3(64-bit)資料夾內 Anaconda Powershell Prompt(Anaconda3)
+      
+      3.點下開啟 Anaconda Powershell Prompt(Anaconda3)
+      
+      4.建立虛擬環境 conda create --name listen2 python=3.9.4
+        
+      5.進入虛擬環境 conda activate listen2
+      
+      6.找到 cd (下載到的路徑)
+      
+      8.安裝伺服端所需套件 pip install -r requirements.txt
+
+三、伺服端系統安裝
+      1.下載壓縮檔 project_listen.zip 
+      
+      2.解壓縮 project_listen.zip 為資料夾 project_listen 
+      
+      3.至 Google雲端硬碟 下載資料夾 h5 
+        連結：https://drive.google.com/drive/folders/1TtMiUozXBEINVaMxbp2vPLv8vJpx93LA?usp=sharing
+        (如果 h5 資料夾為壓縮檔，請解壓縮為資料夾)
+      
+      4.將資料夾h5 放至資料夾 project_listen 內
+
+四、客戶端系統安裝
+      1.下載壓縮檔 project_listen_send.zip 
+      
+      2.解壓縮 project_listen_send.zip 為資料夾 project_listen_send
+
+五、伺服端環境架設
+      1.下載伺服端所需套件 requirements.txt
+      
+      2.安裝伺服端所需套件套件pip install -r requirements.txt
