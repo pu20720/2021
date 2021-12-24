@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+        <meta name="description" content="網站說明" />
+        <meta name="author" content="作者" />
+        <title>美食搜尋器</title>
+        <!-- Favicon--> 
+        <link rel="icon" type="image/x-icon" href="assets/img/logo.png" />
+        <!-- Bootstrap icons-->
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css" rel="stylesheet" type="text/css" />
+        <!-- Google fonts-->
+        <link href="https://fonts.googleapis.com/css?family=Lato:300,400,700,300italic,400italic,700italic" rel="stylesheet" type="text/css" />
+        <!-- Core theme CSS (includes Bootstrap)-->
+        <link href="css/styles.css" rel="stylesheet" />
+        <!-- Vue.js-->
+        <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14"></script>
+        <!-- axios.js-->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.1/axios.min.js" integrity="sha512-bZS47S7sPOxkjU/4Bt0zrhEtWx0y0CRkhEp8IckzK+ltifIIE9EMIMTuT/mEzoIMewUINruDBIR/jJnbguonqQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+        <!-- vue-axios.js-->
+        <script src="https://cdn.jsdelivr.net/npm/vue-axios@3.2.5/dist/vue-axios.es5.min.js"></script>
+        <!-- vue-star-rating.js-->
+        <script src="https://unpkg.com/vue-star-rating/dist/VueStarRating.umd.min.js"></script>
+        <!-- vue-loading -->
+        <script src="https://cdn.jsdelivr.net/npm/vue-loading-overlay@3.4.2/dist/vue-loading.min.js"></script>
+        <!-- font-awesome -->
+        <script src="https://kit.fontawesome.com/f1ac4e0ae4.js" crossorigin="anonymous"></script>
+</script>
+    </head>
+    <body>
+        <!-- Navigation-->
+        <nav class="navbar navbar-light bg-light static-top">
+            <div class="container">
+                <a class="navbar-brand" href="#!">
+                    <img src="assets/img/logo.png" width="30" height="24" class="d-inline-block align-text-top img-fluid" > 美食搜尋器</a>
+            </div>
+        </nav>
+        <!-- Masthead-->
+        <div id="app">  <!-- Vue App 綁定標籤 -->
+        <header class="masthead mb-4">
+            <div class="container position-relative">
+                <div class="row justify-content-center">
+                    <div class="col-xl-6">
+                        <div class="text-center text-white">
+
+                            <h1 class="mb-5">你餓了嗎？<br>快使用美食搜尋器！</h1>
+
+                            <form class="form-subscribe">
+
+                                <div class="row">
+                                    <div class="col">
+                                        <input class="form-control form-control-lg" id="serachText" type="text" placeholder="今天想吃什麼？" v-model="keyword"/>
+                                    </div>
+                                    <!-- @click 代表點擊事件 點了搜尋要執行 serach 這個函式（163行）-->
+                                    <div class="col-auto"><a class="btn btn-primary btn-lg" id="serach" @click="serach">搜尋</a></div>
+                                    <div class="col-auto"><a class="btn btn-primary btn-lg" id="serach" @click="myfavorite">我的最愛</a></div>
+                                </div>
+                                <!-- 加了prevent 是因為點擊 a 連結畫面會跳動 加了prevent 之後會取消預設行為 讓畫面不要跳一下-->
+                                <div class="col text-start mt-2">
+                                    <a href="#" class="text-light mx-2" @click.prevent="serach">早午餐</a>
+                                    <a href="#" class="text-light mx-2" @click.prevent="serach">下午茶</a>
+                                    <a href="#" class="text-light mx-2" @click.prevent="serach">小吃店</a>
+                                    <a href="#" class="text-light mx-2" @click.prevent="serach">宵夜</a>
+                                </div>
+                                <div class="col text-start mt-2">
+                                    <div class="col-auto">
+                                        <a class="btn btn-primary" @click="useHere">當前位置</a>
+                                        <a class="btn btn-primary" @click="useLocal">沙鹿地區</a>
+                                        目前位置： {{ where }}
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+        <!-- Content-->
+            <div class="container" id="content">
+                <loading :active.sync="isLoading" :is-full-page="true"></loading>
+                <div v-if="!isfavo">
+                    <div class="col text-start mt-2 mb-2" v-if="data.results">
+                        <div class="col-auto">
+                            <a class="btn btn-outline-secondary" @click="sortBy(0)">全部 ({{ getNum(0) }})</a>
+                            <a class="btn btn-outline-secondary" @click="sortBy(5)">五顆星 ({{ getNum(5) }})</a>
+                            <a class="btn btn-outline-secondary" @click="sortBy(4)">四顆星 ({{ getNum(4) }})</a>
+                            <a class="btn btn-outline-secondary" @click="sortBy(3)">三顆星 ({{ getNum(3) }})</a>
+                            <a class="btn btn-outline-secondary" @click="sortBy(2)">二顆星 ({{ getNum(2) }})</a>
+                            <a class="btn btn-outline-secondary" @click="sortBy(1)">一顆星 ({{ getNum(1) }})</a>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <!-- 大量產生資料使用 v-for 迴圈 data 這個變數就是儲存google api 抓下來的資料-->
+                    <div class="col-lg-3 mb-3" v-for="(item, key) in sorted" :key="item.id">
+                        <div class="card">
+                            <a class="btn favo" @click="add2favorite(item,$event)"><i class="bi text-warning" :class="isfavo ? 'bi-star-fill':'bi-star'"></i></a>
+                            <img :src="getPhtotPath(item)" class="card-img-top" style="max-height: 150px;">
+                            <div class="card-body">
+                                <!-- 使用 {{ }} 可以直接調用參數 這裡的 item 代表 data 資料裡面的每一個項目 也就是每個餐廳 -->
+                              <h5 class="card-title">{{ item.name }}</h5>
+                            </div>
+                            <ul class="list-group list-group-flush">
+                                <!-- 套用星星評分元件-->
+                              <li class="list-group-item">{{ item.rating }} <star-rating v-model="item.rating" read-only="true" star-size="20" increment="0.01" :show-rating="false" :inline="true" class="ml-1"></star-rating>({{ item.user_ratings_total}})</li>
+                              <li class="list-group-item" v-if="item.opening_hours">
+                                  <!-- 如果有open_now 是 ture 表示營業中 反之打烊了-->
+                                <p v-if="item.opening_hours.open_now" class="text-success">營業中</p>
+                                <p v-else class="text-danger">已打烊</p>
+                              </li>
+                              <!-- 有些資料缺少open_now 就顯示未標示營業時間 -->
+                              <li v-else class="list-group-item text-warning">未標示營業時間</li>
+                              <li class="list-group-item">{{ item.vicinity }}</li>
+                            </ul>
+                            <div class="card-body">
+                                <!-- {{}} 除了可以直接顯示參數外，也可以執行函式 這裡是計算距離 -->
+                              <p>距離{{ distance(item.geometry.location.lat, item.geometry.location.lng, location.lat, location.lng) }}公里</p>
+                            </div>
+                          </div>
+                    </div>
+                </div>
+                <div v-if="!isfavo">
+                    <nav aria-label="Page navigation" v-if="done">
+                        <ul class="pagination">
+                            <!-- 上下頁功能 -->
+                          <li class="page-item"><button class="btn btn-outline-primary mx-3" :class="{'disabled': pre_page}"  @click="previous">上一頁</button></li>
+                          <li class="page-item"><button class="btn btn-outline-primary "  :class="{'disabled': nxt_page}" @click="next">下一頁</button></li>
+                        </ul>
+                      </nav>
+                </div>
+                
+            </div>
+        </div>
+        
+        <!-- Footer-->
+        <footer class="footer bg-light mt-4">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-6 h-100 text-center text-lg-start my-auto">
+                        <p class="text-muted small mb-4 mb-lg-0">&copy; 美食搜尋器 2021. All Rights Reserved.</p>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </body>
+</html>
+
+<style>
+    .card {
+        position: relative;
+    }
+    .favo {
+        position: absolute;
+    }
+</style>
+
+<script>
+let app = new Vue({
+    el: '#app', // 定義Vue要把綁定到哪個ID
+    data() {    // Vue 資料儲存
+        return {
+            title: '美食搜尋器', // 網路標題
+            // 若無法定位，則以沙鹿火車站為中心搜尋
+            location: {
+                lat: '24.2371582',
+                lng: '120.5575871'
+            },
+            keyword: '',        //關鍵字
+            data: { results: null },           //儲存爬蟲資料用
+            old_data: {},       //儲存上一頁資料
+            apiUrl: '',         //google api 網址
+            nxt_tkn: '',        //取得下一頁資料的金鑰
+            pre_page: true,     //是否有上一頁
+            nxt_page: true,     //是否有下一頁
+            done: false,        //抓取資料是否完成
+            isLoading: false,    //是否正在讀取中
+            isHere: false,
+            sorted: {},
+            favoriteList:  [],
+            isfavo: false,
+            tmpdata: [],
+            where: '沙鹿地區'
+        }
+    },
+    methods: {
+        // 取得地理位置座標
+        getlocation(){
+            if (navigator.geolocation){
+                navigator.geolocation.getCurrentPosition(postion => {
+                    // 將座標儲存下來
+                    this.location.lat = postion.coords.latitude 
+                    this.location.lng = postion.coords.longitude
+                    console.log('成功獲取地理位置')
+                    this.where = `目前所在位置是 ${this.location.lat}, ${this.location.lng}`
+                });
+            } else {
+                console.log('當前無法取得地理座標,以沙鹿火車站作為基準')
+            }
+        },
+        // 搜索功能
+        serach(e){
+            if(!this.isHere){
+                this.location.lat = '24.2371582'
+                this.location.lng = '120.5575871'
+            }
+            this.isLoading = !this.isLoading    // 切換到讀取狀態
+            let keyword;
+            // 判斷是按搜尋按鈕還是按下快捷選單的文字
+            if(e.target.id === 'serach') keyword = this.keyword
+            else                         keyword = e.target.innerText
+            const api_key = 'AIzaSyAnb3NJwQ_b87NUiF02RvtUA_k_KylPjpM'   // google api 金鑰
+            // 從資料獲取座標
+            const lat = this.location.lat
+            const lng = this.location.lng
+            const cors = 'https://jsonp.afeld.me/?url='     // 解除CORS限制用的
+            const url = encodeURIComponent(`https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${lat},${lng}&rankby=distance&types=food&keyword=${keyword}&language=zh-TW&key=${api_key}`)
+            console.log(url)
+            this.apiUrl = `${cors}${url}`
+            // 使用axios取得遠端資料
+            this.axios.get(this.apiUrl).then((response) => {
+                if(response.data.status === 'OK'){  // 如果請求成功
+                    console.log(response.data)
+                    this.data = response.data       // 把遠端資料存下來
+                    this.sorted =  this.data.results
+                    this.nxt_page = false           // 因為有資料了，所以就可以有下一頁
+                    this.done = true                // 請求完成
+                    this.nxt_tkn = response.data.next_page_token    // 儲存下一頁資料的金鑰
+                    this.isLoading = !this.isLoading       // 切換到正常狀態
+                }
+                
+            })
+        },
+        // 計算兩個座標的距離（經度、緯度）計算方式不做介紹，詳細可以參考 https://tools.wingzero.tw/article/sn/72
+        distance(lat1, lon1, lat2, lon2) {
+            if ((lat1 == lat2) && (lon1 == lon2)) {
+                return 0;
+            }
+            else {
+                var radlat1 = Math.PI * lat1/180;
+                var radlat2 = Math.PI * lat2/180;
+                var theta = lon1-lon2;
+                var radtheta = Math.PI * theta/180;
+                var dist = Math.sin(radlat1) * Math.sin(radlat2) + Math.cos(radlat1) * Math.cos(radlat2) * Math.cos(radtheta);
+                if (dist > 1) {
+                    dist = 1;
+                }
+                dist = Math.acos(dist);
+                dist = dist * 180/Math.PI;
+                dist = dist * 60 * 1.1515;
+                dist = dist * 1.609344 
+                return dist.toFixed(2);
+            }
+        },
+        // 下一頁功能
+        next(){
+            this.isLoading = !this.isLoading  //切換至讀取狀態 
+            tkn = this.nxt_tkn                // 取得下一頁金鑰
+            this.pre_page = false             // 因為按了下一頁，所以就有了上一頁
+            const api = `${this.apiUrl}&pagetoken=${tkn}`   // 定義好請求的網址
+            this.axios.get(api).then((response) => {
+                if(response.data.status === 'OK'){      // 如果請求成功
+                    console.log(response.data)
+                    this.old_data = this.data           // 把原本的資料儲存到另一個變數，方便下次使用
+                    this.data = response.data           // 將新資料覆蓋舊資料
+                    this.sorted = this.data.results
+                    this.nxt_tkn = response.data.next_page_token    // 儲存下一頁金鑰
+                    this.isLoading = !this.isLoading   // 切換至正常狀態
+                    window.scrollTo({ top: 0, behavior: 'smooth' });   // 畫面滑動上最上方
+                }
+                
+            })
+        },
+        // 上一頁功能
+        previous(){
+            this.isLoading = !this.isLoading  // 切換至讀取狀態
+            this.$set(this, 'data', this.old_data)      // 將舊資料再覆蓋回來，上一頁不用請求，因為先存起來了
+            this.$set(this, 'sorted', this.old_data)
+            this.$forceUpdate()     // 強制畫面更新一次
+            this.isLoading = !this.isLoading    // 切換至正常狀態
+            window.scrollTo({ top: 0, behavior: 'smooth' });    // 畫面滑動到上方
+        },
+        async useHere(){
+            this.isHere = true
+            await this.getlocation()
+        },
+        useLocal(){
+            this.isHere = false
+            this.where = `沙鹿地區`
+        },
+        sortBy(num){
+            if(num === 0){
+                this.sorted = this.data.results
+            } else {
+                this.sorted = this.data.results.filter(function(item){
+                return item.rating <= num && item.rating >= num-1
+            })
+            }
+            
+        },
+        add2favorite(item,event){
+            if(!this.isfavo){
+                this.favoriteList = JSON.parse(localStorage.getItem('favorite')) ? JSON.parse(localStorage.getItem('favorite')) : [];
+                console.log(this.favoriteList)
+                this.favoriteList.push(item);
+                localStorage.setItem('favorite', JSON.stringify(this.favoriteList));
+                event.target.className = 'bi bi-star-fill text-warning'
+            } else {
+                var index = this.favoriteList.findIndex(value => value.name === item.name)
+                if(index !== -1){
+                    this.favoriteList.splice(index,1);
+                    localStorage.setItem('favorite', JSON.stringify(this.favoriteList));
+                    this.sorted = this.favoriteList
+                }
+            }
+            
+        },
+        myfavorite(e){
+            if(!this.isfavo){
+                e.target.textContent = '返回'
+                this.isfavo = true
+                this.favoriteList = JSON.parse(localStorage.getItem('favorite')) ? JSON.parse(localStorage.getItem('favorite')) : [];
+                this.tmpdata = this.sorted 
+                this.sorted = this.favoriteList
+            } else {
+                e.target.textContent = '我的最愛'
+                this.isfavo = false
+                this.sorted = this.tmpdata
+            }
+        }
+    },
+    computed: {
+        // 取得每家餐廳的圖片
+        getPhtotPath(){
+            return function(item){
+                if(item.photos){
+                    const api_key =  'AIzaSyAnb3NJwQ_b87NUiF02RvtUA_k_KylPjpM'//'AIzaSyB-XzuDizGzCCyAGaKX3NO3GrfnP4P9mgs' // 請求金鑰 
+                    const PHOTO_REFERENCE = item.photos[0].photo_reference    // 圖片參考
+                    const MAX_HEIGHT = item.photos[0].height    // 圖片最大高度
+                    const MAX_WIDTH = item.photos[0].width      // 圖片最大寬度
+                    return `https://maps.googleapis.com/maps/api/place/photo?photoreference=${PHOTO_REFERENCE}&sensor=false&maxheight=${MAX_HEIGHT}&maxwidth=${MAX_WIDTH}&key=${api_key}`
+                }
+            }
+        },
+        getNum(){
+            return function(num){
+                let list = this.data.results
+                if(num === 0){
+                    return list.length
+                }
+                const cnt = list.filter(function(item){
+                    return item.rating <= num && item.rating >= num-1
+                })
+                return cnt.length
+            }
+        }
+    },
+    // created() 代表頁面剛產生時，要執行什麼程式
+    created() {
+        //this.getlocation() // 剛打開頁面，先取得用戶的座標
+    },
+
+})
+Vue.component('star-rating', VueStarRating.default); // 使用星星評分元件
+Vue.component('loading', VueLoading)    // 使用讀取元件
+</script>
