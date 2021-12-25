@@ -15,7 +15,7 @@
 1. 會議記錄：學童的python程式教育會議紀錄-第一次.pdf、學童的python程式教育會議紀錄-第二次.pdf
 2. 畢業專題計畫書：專題計劃書.doc
 3. 成果報告書：專題成果報告書.docx
-4. 系統相關程式：
+4. 系統相關程式：https://drive.google.com/drive/folders/1VxgsJrpft-BwA96iparwCzomsdz5Q785?usp=sharing
 5. 簡報：專題-APCS的程式教育.pptx
 6. 專題海報檔：海報.png
 7. 介紹影片：https://youtu.be/lKdhyzH1USw
