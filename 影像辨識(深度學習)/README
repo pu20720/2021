@@ -1,0 +1,33 @@
+專題名稱： 影像辨識(深度學習)
+⚫ 組員：資工三A 410754370 唐永信
+         資工三A 410715978 何冠霖
+         資工三A 410754257 廖裕乾
+         資工三A 410781123 梁哲綸
+⚫ 指導老師姓名： 林耀鈴 老師
+⚫ 會議記錄：0929討論、1026討論
+
+⚫ 畢業專題計畫書：企劃書.pdf
+⚫ 成果報告書：專題報告書.pdf
+⚫ 程式：code.zip
+         generate_train_data.py
+         makeMuchImg.py
+         Face2Face_v2.py
+         runCamera.py
+⚫ 簡報：110-1 專題展.pptx
+⚫ 海報：B13-深度學習-影像辨識.jpg
+⚫ 介紹影片：https://youtu.be/mBDk4TOIWKE
+
+
+開發環境:
+    python 3.7.11
+    tensorflow 2.4.1
+    keras 2.3.1
+    cudatoolkit 10.1
+    cudnn 7.6.5
+    dlib 19.21.1
+    numby
+    cv2
+    imutils
+
+ * generate_train_data 與 runCamera.py  需要 dlib-臉部68個特徵點模型
+
