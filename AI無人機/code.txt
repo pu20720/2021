@@ -1,0 +1,109 @@
+clear;
+p = parrot();
+cameraObj = camera(p);
+preview(cameraObj);
+takeoff(p);
+moveup(p,0.5,1);
+load detector;
+
+while 1==1
+    %     tic
+     [frame,ts]=snapshot(cameraObj);
+    
+    if ~isempty(frame)
+        [bboxes,score,label]=detect(detector,frame);
+%         imshow(frame);
+    end
+    
+    if ~isempty(bboxes)
+        
+        [score,idx]=max(score);
+        bboxes=bboxes(idx,:);
+        A = sprintf('%s: (Confidence = %f)',label(idx),score);
+        detectedImg = insertObjectAnnotation(frame,'rectangle',bboxes,A);
+%         imshow(detectedImg);
+        
+        
+        difference = [round(bboxes(1)+bboxes(3)/2)-480 round(bboxes(2)+bboxes(4)/2)-360];
+        
+        a = difference(1);
+        b = difference(2);
+        
+        %         a
+        %         b
+        
+                bboxes(3)
+                bboxes(4)
+        x = a*0.21/bboxes(3)*1;  % 公尺
+        y = b*0.29/bboxes(4)*1+0.4;  % 公尺
+        
+        x
+        
+        %右
+        if x > 0.45
+            move(p,'roll',deg2rad(19),'pitch',deg2rad(-22));
+            pause(2);
+            move(p,'roll',deg2rad(-17.9),'pitch',deg2rad(21.9));
+            pause(2.3);
+        end
+        if x > 0.33 & x <= 0.45
+            move(p,'roll',deg2rad(13),'pitch',deg2rad(-22));
+            pause(2);
+            move(p,'roll',deg2rad(-12.9),'pitch',deg2rad(21.9));
+            pause(2.3); ;
+        end
+        if x > 0.2 & x <= 0.33
+            move(p,'roll',deg2rad(11),'pitch',deg2rad(-22));
+            pause(2);
+            move(p,'roll',deg2rad(-10.9),'pitch',deg2rad(21.9));
+            pause(2.3); 
+        end
+        if x > 0.16 & x <= 0.2
+            move(p,'roll',deg2rad(5),'pitch',deg2rad(-22));
+            pause(2);
+            move(p,'roll',deg2rad(-4.9),'pitch',deg2rad(21.9));
+            pause(2.3); 
+        end
+        
+        %中間
+        if(x <= 0.16 & x >= -0.16)
+            move(p,'pitch',deg2rad(-20));
+            pause(2);
+            move(p,'pitch',deg2rad(26));
+            pause(2.5);
+        end
+        
+        %左
+        if x < -0.5
+            move(p,'roll',deg2rad(-19),'pitch',deg2rad(-22));
+            pause(2);
+            move(p,'roll',deg2rad(19),'pitch',deg2rad(21.9));
+            pause(2.3);
+        end
+        if x < -0.35 & x >= -0.5
+            move(p,'roll',deg2rad(-11),'pitch',deg2rad(-22));
+            pause(2);
+            move(p,'roll',deg2rad(11),'pitch',deg2rad(21.9));
+            pause(2.3);
+        end
+        if x < -0.27 & x >= -0.35
+            move(p,'roll',deg2rad(-9),'pitch',deg2rad(-22));
+            pause(2);
+            move(p,'roll',deg2rad(8.9),'pitch',deg2rad(21.9));
+            pause(2.3);
+        end
+        if x < -0.2 & x >= -0.27
+            move(p,'roll',deg2rad(-6),'pitch',deg2rad(-22));
+            pause(2);
+            move(p,'roll',deg2rad(5.9),'pitch',deg2rad(21.9));
+            pause(2.3); 
+        end
+        if x < -0.16 & x >= -0.2
+            move(p,'roll',deg2rad(-3),'pitch',deg2rad(-22));
+            pause(2);
+            move(p,'roll',deg2rad(2.9),'pitch',deg2rad(21.9));
+            pause(2.3); 
+        end
+        pause(0.7);
+    end
+end
